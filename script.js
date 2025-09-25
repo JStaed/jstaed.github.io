@@ -11,6 +11,8 @@ if (isDarkStored === 'true') {
     SetDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
 }
 
+document.body.classList.add('loaded');
+
 function SetDarkMode(isDark) {
     if (isDark) {
         localStorage.setItem('darkMode', 'true');
