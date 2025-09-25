@@ -118,6 +118,9 @@ button {
     border: 3px solid #ffffff;
     background-color: #ffffff60;
     border-radius: 5px;
+    max-height: 1vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .work-button {
@@ -128,20 +131,6 @@ button {
     width: 50%;
     padding: 5px;
     margin-top: 40px;
-    background-color: #ffffff70;
-    border: 1px solid #ffffff;
-    border-radius: 2px;
-    transition: border 0.25s, background-color 0.25s, color 0.25s;
-}
-
-.blog-button {
-    color: #000000;
-    display: block;
-    text-decoration: none;
-    margin: 0 auto;
-    width: 50%;
-    padding: 5px;
-    margin-top: 20px;
     background-color: #ffffff70;
     border: 1px solid #ffffff;
     border-radius: 2px;
