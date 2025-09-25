@@ -7,11 +7,14 @@ if (isDarkStored === 'true') {
 } else if (isDarkStored === 'false') {
     SetDarkMode(false);
 } else {
-    // No stored preference → use system setting
     SetDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
 }
 
-document.body.classList.add('loaded');
+async function CompleteLoad() {
+    setTimeout(function() {
+        document.body.classList.add('loaded');
+    }, 500);
+}
 
 function SetDarkMode(isDark) {
     if (isDark) {
@@ -34,3 +37,5 @@ DARK_MODE_BUTTON.addEventListener('click', () => {
         SetDarkMode(true);
     }
 });
+
+CompleteLoad();
