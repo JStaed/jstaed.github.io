@@ -58,6 +58,11 @@ button {
   cursor: pointer;
 }
 
+img {
+    width: 50%;
+    height: 50%;
+}
+
 .center {
     display: block;
     margin: 0 auto;
