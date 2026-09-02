@@ -83,6 +83,17 @@ img {
     transition: color 0.5s;
 }
 
+.homeButton {
+    font-size: 25px;
+    border-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);
+    position: fixed;
+    display: block;
+    top: -3px;
+    left: 0;
+    transition: color 0.5s;
+}
+
 .panel-container {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr; /* left : center : right */

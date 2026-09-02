@@ -1,7 +1,8 @@
 const DARK_MODE_BUTTON = document.getElementById('toggleDark');
+const HOME_BUTTON = document.getElementById('homeButton');
 const ICON = DARK_MODE_BUTTON.querySelector('i');
-
 const isDarkStored = localStorage.getItem('darkMode');
+
 if (isDarkStored === 'true') {
     SetDarkMode(true);
 } else if (isDarkStored === 'false') {
@@ -37,5 +38,9 @@ DARK_MODE_BUTTON.addEventListener('click', () => {
         SetDarkMode(true);
     }
 });
+
+HOME_BUTTON.addEventListener('click', () => {
+    
+})
 
 CompleteLoad();
