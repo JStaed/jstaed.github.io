@@ -37,6 +37,7 @@ body.dark .panel-container .center-panel {
     background-color: #a78aff60;
     border: 3px solid #a78aff30;
 }
+
 body.dark .panel-container .side-panel {
     background-color: #a78aff60;
     border: 3px solid #a78aff30;
@@ -128,7 +129,7 @@ img {
     scrollbar-width: thin;
 }
 
-.work-button {
+.page-button {
     color: #000000;
     display: block;
     text-decoration: none;
@@ -142,7 +143,7 @@ img {
     transition: border 0.25s, background-color 0.25s, color 0.25s;
 }
 
-body.dark .work-button {
+body.dark .page-button {
     color: #ffffff;
     border-color: #000000;
     background-color: #00000070;
