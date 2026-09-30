@@ -2,16 +2,21 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>JStaed Wooden Spoon</title>
         <link rel="stylesheet" href="../../styles.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body>
-        <a href="https://www.jstaed.me"><button href="https://www.jstaed.me" class="homeButton"><i class="fa-sharp-duotone fa-solid fa-house"></i></button></a>
+        <a href="https://www.jstaed.me" class="homeButton" aria-label="Home"><i class="fa-sharp-duotone fa-solid fa-house" aria-hidden="true"></i></a>
         <button id="toggleDark" class="darkModeButton"><i class="fa-solid fa-sun"></i></button>
         <h1>Wooden Spoon</h1>
-        <div class="panel-container-1_3">
-            <div class="side-panel left">
+        <div class="project-tabs" data-project-tabs role="tablist" aria-label="Project sections">
+            <button type="button" role="tab" id="description-tab" aria-controls="description-panel" aria-selected="true">Description</button>
+            <button type="button" role="tab" id="photos-tab" aria-controls="photos-panel" aria-selected="false">Photos</button>
+        </div>
+        <div class="panel-container-1_3 project-panels">
+            <div class="side-panel left" id="description-panel" role="tabpanel" aria-labelledby="description-tab" tabindex="0">
                 <h2>Project Description</h2>
                 <p>
                     <b>Course:</b><br>Wood Furniture I<br>
@@ -23,20 +28,29 @@
                     <b>In Progress</b>
                 </p>
             </div>
-            <div class="side-panel right">
+            <div class="side-panel right" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab" tabindex="0">
                 <h2>Photos</h2>
-                <figure>
-                    <img src="images/cutout.webp" alt="">
-                    <figcaption>The overall shape of the spoon following cutting it out with a bandsaws</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/carving-1.webp" alt="">
-                    <figcaption>The beginning stages of carving the hollow part of the spoon</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/planed-wood.webp" alt="A piece of wood following the jointing and planing processes sitting on a table next to a sketchbook showcasing a drawing of a guitar with a butterfly shaped body.">
-                    <figcaption>The jointed and planed piece of wood next to the initial sketches</figcaption>
-                </figure>
+                <div class="gallery" data-gallery data-start-at="last" role="region" aria-roledescription="carousel" aria-label="Wooden Spoon project photos">
+                    <div class="gallery-stage" data-gallery-stage tabindex="0">
+                        <figure class="gallery-slide" role="group" aria-roledescription="slide">
+                            <img src="images/planed-wood.webp" alt="A piece of wood following the jointing and planing processes sitting on a table next to a sketchbook showcasing a drawing of a guitar with a butterfly shaped body.">
+                            <figcaption>The jointed and planed wood next to the initial sketches</figcaption>
+                        </figure>
+                        <figure class="gallery-slide" role="group" aria-roledescription="slide">
+                            <img src="images/carving-1.webp" alt="Wooden spoon blank with the bowl partially carved and shaped.">
+                            <figcaption>The beginning stages of carving the hollow part of the spoon</figcaption>
+                        </figure>
+                        <figure class="gallery-slide" role="group" aria-roledescription="slide">
+                            <img src="images/cutout.webp" alt="Rough-cut wooden spoon blank with a long handle and rounded bowl, resting on a workbench.">
+                            <figcaption>The overall shape of the spoon after it was cut out with a bandsaw</figcaption>
+                        </figure>
+                    </div>
+                    <div class="gallery-controls">
+                        <button type="button" class="gallery-arrow" data-gallery-previous aria-label="Previous photo"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                        <span class="gallery-count" data-gallery-count aria-live="polite">3 of 3</span>
+                        <button type="button" class="gallery-arrow" data-gallery-next aria-label="Next photo"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                    </div>
+                </div>
             </div>
         </div>
         <script src="../../script.js"></script>

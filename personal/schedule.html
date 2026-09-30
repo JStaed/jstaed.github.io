@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Weekly Schedule</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      --bg: #94edff;
+      --text: #000000;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --card: #ffffff60;
+      --class-bg: #dbeafe;
+      --class-bd: #2563eb;
+      --class-fg: #1e3a8a;
+      --job-bg: #dcfce7;
+      --job-bd: #16a34a;
+      --job-fg: #14532d;
+      --shift-bg: #ffedd5;
+      --shift-bd: #ea580c;
+      --shift-fg: #7c2d12;
+      --meal-bg: #fef9c3;
+      --meal-bd: #ca8a04;
+      --meal-fg: #713f12;
+      --flex-bg: #ede9fe;
+      --flex-bd: #7c3aed;
+      --flex-fg: #4c1d95;
+      --free-bg: #ccfbf1;
+      --free-bd: #0d9488;
+      --free-fg: #134e4a;
+      --base-bg: #f1f5f9;
+      --base-bd: #94a3b8;
+      --base-fg: #334155;
+      --club-bg: #fce7f3;
+      --club-bd: #db2777;
+      --club-fg: #831843;
+    }
+
+    body.dark {
+      --bg: #240038;
+      --text: #ffffff;
+      --muted: #94a3b8;
+      --line: #263248;
+      --card: #a78aff60;
+      --class-bg: #1e2f5c;
+      --class-bd: #60a5fa;
+      --class-fg: #dbeafe;
+      --job-bg: #14401f;
+      --job-bd: #4ade80;
+      --job-fg: #dcfce7;
+      --shift-bg: #4a2410;
+      --shift-bd: #fb923c;
+      --shift-fg: #ffedd5;
+      --meal-bg: #46390c;
+      --meal-bd: #facc15;
+      --meal-fg: #fef9c3;
+      --flex-bg: #2e2358;
+      --flex-bd: #a78bfa;
+      --flex-fg: #ede9fe;
+      --free-bg: #0f3b38;
+      --free-bd: #2dd4bf;
+      --free-fg: #ccfbf1;
+      --base-bg: #1f2937;
+      --base-bd: #64748b;
+      --base-fg: #e2e8f0;
+      --club-bg: #4a1a34;
+      --club-bd: #f472b6;
+      --club-fg: #fce7f3;
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Lato', sans-serif;
+      padding: 20px 14px 32px
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin: 0 0 4px
+    }
+
+    .sub {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+      padding-top: 16px;
+      margin: 0 0 14px
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px
+    }
+
+    .chip {
+      font-size: .78rem;
+      padding: 3px 10px;
+      border-radius: 99px;
+      border-left: 4px solid;
+      font-weight: 600
+    }
+
+    .wrap {
+      overflow-x: auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 5px
+    }
+
+    .mobile-schedule {
+      display: none
+    }
+
+    .mobile-days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 5px;
+      margin-bottom: 14px
+    }
+
+    .mobile-days button {
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 44px;
+      margin: 0;
+      padding: 8px 2px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--card);
+      color: var(--text);
+      font-size: .82rem;
+      font-weight: 700
+    }
+
+    .mobile-days button[aria-selected="true"] {
+      border-color: #7c3aed;
+      background: #ede9fe;
+      color: #4c1d95
+    }
+
+    body.dark .mobile-days button[aria-selected="true"] {
+      border-color: #ffffff;
+      background: #c4adff;
+      color: #240038
+    }
+
+    .mobile-day-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 10px
+    }
+
+    .mobile-day-heading h2 {
+      margin: 0
+    }
+
+    .mobile-day-heading span {
+      color: var(--muted);
+      font-size: .82rem
+    }
+
+    .mobile-events {
+      display: grid;
+      gap: 8px
+    }
+
+    .mobile-event {
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 9px 10px;
+      border-left: 4px solid var(--event-border);
+      border-radius: 4px;
+      background: var(--event-bg);
+      color: var(--event-fg)
+    }
+
+    .mobile-event-time {
+      font-size: .78rem;
+      font-weight: 700;
+      line-height: 1.35
+    }
+
+    .mobile-event-name {
+      display: block;
+      font-size: .95rem;
+      line-height: 1.3
+    }
+
+    .mobile-event-category {
+      display: block;
+      margin-top: 2px;
+      font-size: .75rem;
+      opacity: .8
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 52px repeat(7, minmax(104px, 1fr));
+      min-width: 820px
+    }
+
+    .hd {
+      position: sticky;
+      top: 0;
+      text-align: center;
+      font-weight: 700;
+      font-size: .85rem;
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--line);
+      background: var(--card)
+    }
+
+    .times {
+      position: relative
+    }
+
+    .times span {
+      position: absolute;
+      right: 6px;
+      font-size: .68rem;
+      color: var(--muted);
+      transform: translateY(-50%)
+    }
+
+    .times span:first-child {
+      transform: translateY(0)
+    }
+
+    .col {
+      position: relative;
+      border-left: 1px solid var(--line);
+      background-image: repeating-linear-gradient(to bottom, var(--line) 0, var(--line) 1px, transparent 1px, transparent 48px)
+    }
+
+    .ev {
+      position: absolute;
+      left: 3px;
+      right: 3px;
+      border-left: 4px solid;
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: .72rem;
+      line-height: 1.25;
+      overflow: hidden;
+      box-sizing: border-box
+    }
+
+    .ev b {
+      display: block;
+      font-size: .76rem
+    }
+
+    .ev i {
+      font-style: normal;
+      opacity: .8;
+      font-size: .66rem
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: .82rem;
+      margin-top: 12px
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 16px 10px 24px
+      }
+
+      h1 {
+        font-size: 1.35rem
+      }
+
+      .sub {
+        line-height: 1.5
+      }
+
+      .legend {
+        gap: 6px
+      }
+
+      .chip {
+        font-size: .72rem;
+        padding: 3px 8px
+      }
+
+      .wrap {
+        display: none
+      }
+
+      .mobile-schedule {
+        display: block
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a href="https://www.jstaed.me" class="homeButton" aria-label="Home"><i class="fa-sharp-duotone fa-solid fa-house" aria-hidden="true"></i></a>
+  <button id="toggleDark" class="darkModeButton"><i class="fa-solid fa-sun"></i></button>
+  <main>
+    <h1>Weekly Schedule</h1>
+    <p class="sub">Wake 7:00am &middot; Bed 10:30&ndash;11:30pm &middot; Work 21 hrs/week &middot; 11 during LTS
+    </p>
+    <div class="legend" id="legend"></div>
+    <div class="mobile-schedule">
+      <div class="mobile-days" id="mobileDays" role="tablist" aria-label="Choose a day"></div>
+      <section id="mobileDayView" role="tabpanel" tabindex="0">
+        <div class="mobile-day-heading">
+          <h2 id="mobileDayHeading"></h2>
+          <span id="mobileEventCount"></span>
+        </div>
+        <div class="mobile-events" id="mobileEvents"></div>
+      </section>
+    </div>
+    <div class="wrap">
+      <div class="grid" id="grid"></div>
+    </div>
+  </main>
+  <script>
+    const H = 48, S = 360, E = 1350;
+    const m = s => { const [a, b] = s.split(":"); return +a * 60 + +b };
+    const fmt = s => { let [a, b] = s.split(":"); a = +a; const p = a >= 12 ? "pm" : "am"; a = a % 12 || 12; return a + (b === "00" ? "" : ":" + b) + p };
+    const mwf = [["7:00", "8:00", "Morning routine", "base"], ["8:00", "9:45", "Starbucks", "shift"], ["10:00", "10:50", "Python", "class"], ["10:50", "12:00", "Lunch", "meal"], ["12:00", "13:50", "Work / LTS", "job"]];
+    const mw = [...mwf, ["13:50", "15:00", "Homework / buffer", "flex"], ["15:00", "17:30", "Metalsmithing", "class"], ["17:30", "18:15", "Dinner", "meal"], ["18:30", "20:00", "Homework", "flex"], ["20:00", "22:30", "Free time", "free"]];
+    const fri = [...mwf, ["14:00", "16:00", "Work", "job"], ["16:30", "17:30", "COGS (±30 min)", "club"], ["18:00", "18:45", "Dinner", "meal"], ["18:30", "22:30", "Free time", "free"]];
+    const tt = [["7:00", "8:00", "Morning routine", "base"], ["8:15", "10:45", "Wood Furniture", "class"], ["11:00", "13:45", "Work / LTS", "job"], ["13:45", "14:30", "Lunch", "meal"], ["14:30", "17:00", "Work", "job"], ["17:00", "18:30", "Dinner window", "meal"], ["19:00", "20:30", "Homework", "flex"], ["20:30", "22:30", "Free time", "free"]];
+    const sat = [["7:00", "10:00", "Free morning", "free"], ["10:00", "11:00", "Starbucks", "shift"], ["11:00", "13:00", "Free time", "free"], ["13:00", "16:00", "Work", "job"], ["16:00", "22:30", "Free time", "free"]];
+    const sun = [["7:00", "10:00", "Free morning", "free"], ["10:00", "11:30", "Brunch", "meal"], ["11:30", "13:00", "Free time", "free"], ["13:00", "15:00", "Weekly plan + homework", "flex"], ["15:00", "22:30", "Free time", "free"]];
+    const days = [["Sun", sun], ["Mon", mw], ["Tue", tt], ["Wed", mw], ["Thu", tt], ["Fri", fri], ["Sat", sat]];
+    const cats = { class: "Classes", job: "Work", shift: "Starbucks", meal: "Meals", flex: "Flex / homework", free: "Free time", base: "Routine", club: "Club" };
+    const dayLabels = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday" };
+    document.getElementById("legend").innerHTML = Object.entries(cats).filter(([k]) => !["flex", "free"].includes(k)).map(([k, v]) => `<span class="chip" style="background:var(--${k}-bg);border-color:var(--${k}-bd);color:var(--${k}-fg)">${v}</span>`).join("");
+
+    const mobileDays = document.getElementById("mobileDays");
+    const mobileDayView = document.getElementById("mobileDayView");
+    const mobileDayHeading = document.getElementById("mobileDayHeading");
+    const mobileEventCount = document.getElementById("mobileEventCount");
+    const mobileEvents = document.getElementById("mobileEvents");
+    mobileDays.innerHTML = days.map(([day], index) => `<button type="button" role="tab" id="mobile-day-${index}" aria-controls="mobileDayView" aria-label="${dayLabels[day]}" aria-selected="false" tabindex="-1">${day}</button>`).join("");
+    const mobileDayTabs = Array.from(mobileDays.querySelectorAll('[role="tab"]'));
+
+    function ShowMobileDay(index, moveFocus = false) {
+      const [day, events] = days[index];
+      const visibleEvents = events.filter(event => !["flex", "free"].includes(event[3]));
+      mobileDayTabs.forEach((tab, tabIndex) => {
+        const selected = tabIndex === index;
+        tab.setAttribute("aria-selected", String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      mobileDayView.setAttribute("aria-labelledby", mobileDayTabs[index].id);
+      mobileDayHeading.textContent = dayLabels[day];
+      mobileEventCount.textContent = `${visibleEvents.length} scheduled events`;
+      mobileEvents.innerHTML = visibleEvents.map(([start, end, label, category]) => `<article class="mobile-event" style="--event-bg:var(--${category}-bg);--event-border:var(--${category}-bd);--event-fg:var(--${category}-fg)"><span class="mobile-event-time">${fmt(start)}&ndash;${fmt(end)}</span><span><strong class="mobile-event-name">${label}</strong><span class="mobile-event-category">${cats[category]}</span></span></article>`).join("");
+      if (moveFocus) mobileDayTabs[index].focus();
+    }
+
+    mobileDayTabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => ShowMobileDay(index));
+      tab.addEventListener("keydown", event => {
+        let nextIndex;
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % days.length;
+        if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + days.length) % days.length;
+        if (event.key === "Home") nextIndex = 0;
+        if (event.key === "End") nextIndex = days.length - 1;
+        if (nextIndex !== undefined) {
+          event.preventDefault();
+          ShowMobileDay(nextIndex, true);
+        }
+      });
+    });
+    ShowMobileDay(0);
+
+    const total = (E - S) / 60 * H;
+    let h = '<div class="hd"></div>' + days.map(d => `<div class="hd">${d[0]}</div>`).join("");
+    let t = '<div class="times" style="height:' + total + 'px">';
+    for (let x = 6; x <= 22; x++) { t += `<span style="top:${(x - 6) * H}px">${fmt(x + ":00")}</span>` }
+    h += t + "</div>";
+    days.forEach(([n, evs]) => {
+      h += `<div class="col" style="height:${total}px">` + evs.filter(e => !["flex", "free"].includes(e[3])).map(([a, b, l, c]) => {
+        const top = (m(a) - S) / 60 * H, ht = (m(b) - m(a)) / 60 * H;
+        return `<div class="ev" style="top:${top}px;height:${ht - 2}px;background:var(--${c}-bg);border-color:var(--${c}-bd);color:var(--${c}-fg)"><b>${l}</b><i>${fmt(a)}&ndash;${fmt(b)}</i></div>`
+      }).join("") + "</div>";
+    });
+    document.getElementById("grid").innerHTML = h;
+  </script>
+  <script src="../script.js"></script>
+</body>
+
+</html>
