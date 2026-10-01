@@ -150,4 +150,11 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
     ShowSlide(Number.isInteger(startIndex) ? Math.min(Math.max(startIndex, 0), slides.length - 1) : 0);
 });
 
+if (!document.querySelector('.site-footer')) {
+    const footer = document.createElement('footer');
+    footer.className = 'site-footer';
+    footer.innerHTML = '<div>Jane Staed</div><div>© 2026 All rights reserved</div>';
+    document.body.appendChild(footer);
+}
+
 CompleteLoad();
