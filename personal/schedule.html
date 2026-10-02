@@ -38,9 +38,15 @@
       --base-bg: #f1f5f9;
       --base-bd: #94a3b8;
       --base-fg: #334155;
-      --club-bg: #fce7f3;
-      --club-bd: #db2777;
-      --club-fg: #831843;
+      --club-bg: #fee2e2;
+      --club-bd: #b91c1c;
+      --club-fg: #450a0a;
+      --appt-bg: #fdf2f8;
+      --appt-bd: #ec4899;
+      --appt-fg: #831843;
+      --studio-bg: #dbeafe;
+      --studio-bd: #2563eb;
+      --studio-fg: #1e3a8a;
     }
 
     body.dark {
@@ -70,9 +76,15 @@
       --base-bg: #1f2937;
       --base-bd: #64748b;
       --base-fg: #e2e8f0;
-      --club-bg: #4a1a34;
-      --club-bd: #f472b6;
-      --club-fg: #fce7f3;
+      --club-bg: #4b0d1f;
+      --club-bd: #f87171;
+      --club-fg: #fee2e2;
+      --appt-bg: #4b1232;
+      --appt-bd: #f472b6;
+      --appt-fg: #fdf2f8;
+      --studio-bg: #1e3a8a;
+      --studio-bd: #60a5fa;
+      --studio-fg: #dbeafe;
     }
 
     html {
@@ -102,12 +114,14 @@
       font-size: 1rem;
       font-weight: 700;
       padding-top: 16px;
-      margin: 0 0 14px
+      margin: 0 0 14px;
+      text-align: center
     }
 
     .legend {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 8px;
       margin-bottom: 14px
     }
@@ -158,10 +172,19 @@
       color: #4c1d95
     }
 
-    body.dark .mobile-days button[aria-selected="true"] {
-      border-color: #ffffff;
-      background: #c4adff;
-      color: #240038
+    .mobile-days button.is-current,
+    .hd.is-current {
+      border-color: var(--line);
+      background: var(--card);
+      color: var(--text)
+    }
+
+    body.dark .mobile-days button[aria-selected="true"],
+    body.dark .mobile-days button.is-current,
+    body.dark .hd.is-current {
+      border-color: var(--line);
+      background: var(--card);
+      color: var(--text)
     }
 
     .mobile-day-heading {
@@ -232,6 +255,11 @@
       font-size: .85rem;
       padding: 10px 4px;
       border-bottom: 1px solid var(--line);
+      background: var(--card)
+    }
+
+    .hd.is-current {
+      border-color: var(--line);
       background: var(--card)
     }
 
@@ -325,8 +353,7 @@
   <button id="toggleDark" class="darkModeButton"><i class="fa-solid fa-sun"></i></button>
   <main>
     <h1>Weekly Schedule</h1>
-    <p class="sub">Wake 7:00am &middot; Bed 10:30&ndash;11:30pm &middot; Work 21 hrs/week &middot; 11 during LTS
-    </p>
+    <p class="sub" id="scheduleSummary"></p>
     <div class="legend" id="legend"></div>
     <div class="mobile-schedule">
       <div class="mobile-days" id="mobileDays" role="tablist" aria-label="Choose a day"></div>
@@ -344,17 +371,90 @@
   </main>
   <script>
     const H = 48, S = 360, E = 1350;
+    const ev = (start, end, label, category) => ({ start, end, label, category });
     const m = s => { const [a, b] = s.split(":"); return +a * 60 + +b };
     const fmt = s => { let [a, b] = s.split(":"); a = +a; const p = a >= 12 ? "pm" : "am"; a = a % 12 || 12; return a + (b === "00" ? "" : ":" + b) + p };
-    const mwf = [["7:00", "8:00", "Morning routine", "base"], ["8:00", "9:45", "Starbucks", "shift"], ["10:00", "10:50", "Python", "class"], ["10:50", "12:00", "Lunch", "meal"], ["12:00", "13:50", "Work / LTS", "job"]];
-    const mw = [...mwf, ["13:50", "15:00", "Homework / buffer", "flex"], ["15:00", "17:30", "Metalsmithing", "class"], ["17:30", "18:15", "Dinner", "meal"], ["18:30", "20:00", "Homework", "flex"], ["20:00", "22:30", "Free time", "free"]];
-    const fri = [...mwf, ["14:00", "16:00", "Work", "job"], ["16:30", "17:30", "COGS (±30 min)", "club"], ["18:00", "18:45", "Dinner", "meal"], ["18:30", "22:30", "Free time", "free"]];
-    const tt = [["7:00", "8:00", "Morning routine", "base"], ["8:15", "10:45", "Wood Furniture", "class"], ["11:00", "13:45", "Work / LTS", "job"], ["13:45", "14:30", "Lunch", "meal"], ["14:30", "17:00", "Work", "job"], ["17:00", "18:30", "Dinner window", "meal"], ["19:00", "20:30", "Homework", "flex"], ["20:30", "22:30", "Free time", "free"]];
-    const sat = [["7:00", "10:00", "Free morning", "free"], ["10:00", "11:00", "Starbucks", "shift"], ["11:00", "13:00", "Free time", "free"], ["13:00", "16:00", "Work", "job"], ["16:00", "22:30", "Free time", "free"]];
-    const sun = [["7:00", "10:00", "Free morning", "free"], ["10:00", "11:30", "Brunch", "meal"], ["11:30", "13:00", "Free time", "free"], ["13:00", "15:00", "Weekly plan + homework", "flex"], ["15:00", "22:30", "Free time", "free"]];
-    const days = [["Sun", sun], ["Mon", mw], ["Tue", tt], ["Wed", mw], ["Thu", tt], ["Fri", fri], ["Sat", sat]];
-    const cats = { class: "Classes", job: "Work", shift: "Starbucks", meal: "Meals", flex: "Flex / homework", free: "Free time", base: "Routine", club: "Club" };
+
+    const weekdayBase = [
+      ev("7:00", "8:00", "Morning routine", "base"),
+      ev("8:00", "9:45", "Starbucks", "shift"),
+      ev("10:00", "10:50", "Python", "class"),
+      ev("12:00", "13:50", "Work / LTS", "job")
+    ];
+
+    const monWed = [
+      ...weekdayBase,
+      ev("15:00", "17:30", "Metalsmithing", "class"),
+      ev("17:30", "18:30", "Dinner", "meal")
+    ];
+
+    const wed = [
+      ...monWed,
+      ev("19:00", "21:00", "Metals Studio", "studio")
+    ];
+
+    const fri = [
+      ...weekdayBase,
+      ev("14:00", "15:00", "Therapy", "appt"),
+      ev("16:30", "17:30", "COGS", "club"),
+      ev("17:30", "18:30", "Dinner", "meal")
+    ];
+
+    const tue = [
+      ev("7:00", "8:00", "Morning routine", "base"),
+      ev("8:15", "10:45", "Wood Furniture", "class"),
+      ev("11:00", "12:30", "LTS", "job"),
+      ev("12:30", "13:45", "Work / LTS", "job"),
+      ev("17:30", "18:30", "Dinner", "meal")
+    ];
+
+    const th = [
+      ev("7:00", "8:00", "Morning routine", "base"),
+      ev("8:15", "10:45", "Wood Furniture", "class"),
+      ev("11:00", "12:30", "LTS", "job"),
+      ev("12:30", "13:45", "Work / LTS", "job"),
+      ev("14:00", "15:00", "Therapy", "appt"),
+      ev("17:30", "18:30", "Dinner", "meal")
+    ];
+
+    const sat = [
+      ev("7:00", "8:00", "Morning routine", "base"),
+      ev("10:00", "11:00", "Starbucks", "shift"),
+      ev("15:00", "17:00", "Metals Studio", "studio"),
+      ev("17:30", "18:30", "Dinner", "meal"),
+      ev("19:00", "21:00", "Metals Studio", "studio")
+    ];
+
+    const sun = [
+      ev("7:00", "8:00", "Morning routine", "base"),
+      ev("10:00", "11:30", "Brunch", "meal"),
+      ev("17:30", "18:30", "Dinner", "meal")
+    ];
+
+    const schedule = { Sun: sun, Mon: monWed, Tue: tue, Wed: wed, Thu: th, Fri: fri, Sat: sat };
+    const dayOrder = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const days = dayOrder.map(day => [day, schedule[day]]);
+    const cats = { class: "Classes", job: "Work", shift: "Starbucks", meal: "Meals", flex: "Flex / homework", free: "Free time", base: "Routine", club: "Club", appt: "Appointments", studio: "Studio time" };
     const dayLabels = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday" };
+    const easternNow = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+    const currentDay = dayOrder[easternNow.getDay()];
+    const currentIndex = dayOrder.indexOf(currentDay);
+
+    const workEntries = Object.values(schedule)
+      .flat()
+      .filter(event => event.category === "job");
+    
+    const ltsEntries = Object.values(schedule)
+      .flat()
+      .filter(event => event.label.includes("LTS"));
+
+    const workMinutes = workEntries.reduce((total, event) => total + (m(event.end) - m(event.start)), 0);
+    const ltsMinutes = 30 + ltsEntries.reduce((total, event) => total + (m(event.end) - m(event.start)), 0);
+    const pay = ((workMinutes / 60) * 125 * 0.7) + (((ltsMinutes) / 60) * 11 * 0.95);
+    const hoursText = minutes => (minutes / 60).toFixed(1).replace(/\.0$/, "");
+    const summary = document.getElementById("scheduleSummary");
+    summary.textContent = `Wake 7:00am · Bed 11:00pm · Work ${hoursText(workMinutes)} Hours · ${hoursText(ltsMinutes)} LTS Hours · Estimated Pay $${pay.toFixed(2)}`;
+
     document.getElementById("legend").innerHTML = Object.entries(cats).filter(([k]) => !["flex", "free"].includes(k)).map(([k, v]) => `<span class="chip" style="background:var(--${k}-bg);border-color:var(--${k}-bd);color:var(--${k}-fg)">${v}</span>`).join("");
 
     const mobileDays = document.getElementById("mobileDays");
@@ -362,21 +462,22 @@
     const mobileDayHeading = document.getElementById("mobileDayHeading");
     const mobileEventCount = document.getElementById("mobileEventCount");
     const mobileEvents = document.getElementById("mobileEvents");
-    mobileDays.innerHTML = days.map(([day], index) => `<button type="button" role="tab" id="mobile-day-${index}" aria-controls="mobileDayView" aria-label="${dayLabels[day]}" aria-selected="false" tabindex="-1">${day}</button>`).join("");
+    mobileDays.innerHTML = days.map(([day], index) => `<button type="button" role="tab" id="mobile-day-${index}" class="${day === currentDay ? 'is-current' : ''}" aria-controls="mobileDayView" aria-label="${dayLabels[day]}" aria-selected="false" tabindex="-1">${day}</button>`).join("");
     const mobileDayTabs = Array.from(mobileDays.querySelectorAll('[role="tab"]'));
 
     function ShowMobileDay(index, moveFocus = false) {
       const [day, events] = days[index];
-      const visibleEvents = events.filter(event => !["flex", "free"].includes(event[3]));
+      const visibleEvents = events.filter(event => !["flex", "free"].includes(event.category));
       mobileDayTabs.forEach((tab, tabIndex) => {
         const selected = tabIndex === index;
         tab.setAttribute("aria-selected", String(selected));
+        tab.classList.toggle("is-current", dayOrder[tabIndex] === currentDay);
         tab.tabIndex = selected ? 0 : -1;
       });
       mobileDayView.setAttribute("aria-labelledby", mobileDayTabs[index].id);
       mobileDayHeading.textContent = dayLabels[day];
       mobileEventCount.textContent = `${visibleEvents.length} scheduled events`;
-      mobileEvents.innerHTML = visibleEvents.map(([start, end, label, category]) => `<article class="mobile-event" style="--event-bg:var(--${category}-bg);--event-border:var(--${category}-bd);--event-fg:var(--${category}-fg)"><span class="mobile-event-time">${fmt(start)}&ndash;${fmt(end)}</span><span><strong class="mobile-event-name">${label}</strong><span class="mobile-event-category">${cats[category]}</span></span></article>`).join("");
+      mobileEvents.innerHTML = visibleEvents.map(({ start, end, label, category }) => `<article class="mobile-event" style="--event-bg:var(--${category}-bg);--event-border:var(--${category}-bd);--event-fg:var(--${category}-fg)"><span class="mobile-event-time">${fmt(start)}&ndash;${fmt(end)}</span><span><strong class="mobile-event-name">${label}</strong><span class="mobile-event-category">${cats[category]}</span></span></article>`).join("");
       if (moveFocus) mobileDayTabs[index].focus();
     }
 
@@ -394,17 +495,17 @@
         }
       });
     });
-    ShowMobileDay(0);
+    ShowMobileDay(currentIndex);
 
     const total = (E - S) / 60 * H;
-    let h = '<div class="hd"></div>' + days.map(d => `<div class="hd">${d[0]}</div>`).join("");
+    let h = '<div class="hd"></div>' + days.map(d => `<div class="hd ${d[0] === currentDay ? 'is-current' : ''}">${d[0]}</div>`).join("");
     let t = '<div class="times" style="height:' + total + 'px">';
     for (let x = 6; x <= 22; x++) { t += `<span style="top:${(x - 6) * H}px">${fmt(x + ":00")}</span>` }
     h += t + "</div>";
-    days.forEach(([n, evs]) => {
-      h += `<div class="col" style="height:${total}px">` + evs.filter(e => !["flex", "free"].includes(e[3])).map(([a, b, l, c]) => {
-        const top = (m(a) - S) / 60 * H, ht = (m(b) - m(a)) / 60 * H;
-        return `<div class="ev" style="top:${top}px;height:${ht - 2}px;background:var(--${c}-bg);border-color:var(--${c}-bd);color:var(--${c}-fg)"><b>${l}</b><i>${fmt(a)}&ndash;${fmt(b)}</i></div>`
+    days.forEach(([day, evs]) => {
+      h += `<div class="col" style="height:${total}px">` + evs.filter(event => !["flex", "free"].includes(event.category)).map(({ start, end, label, category }) => {
+        const top = (m(start) - S) / 60 * H, ht = (m(end) - m(start)) / 60 * H;
+        return `<div class="ev" style="top:${top}px;height:${ht - 2}px;background:var(--${category}-bg);border-color:var(--${category}-bd);color:var(--${category}-fg)"><b>${label}</b><i>${fmt(start)}&ndash;${fmt(end)}</i></div>`
       }).join("") + "</div>";
     });
     document.getElementById("grid").innerHTML = h;
