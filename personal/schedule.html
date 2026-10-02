@@ -23,9 +23,6 @@
       --job-bg: #dcfce7;
       --job-bd: #16a34a;
       --job-fg: #14532d;
-      --shift-bg: #ffedd5;
-      --shift-bd: #ea580c;
-      --shift-fg: #7c2d12;
       --meal-bg: #fef9c3;
       --meal-bd: #ca8a04;
       --meal-fg: #713f12;
@@ -61,9 +58,6 @@
       --job-bg: #14401f;
       --job-bd: #4ade80;
       --job-fg: #dcfce7;
-      --shift-bg: #4a2410;
-      --shift-bd: #fb923c;
-      --shift-fg: #ffedd5;
       --meal-bg: #46390c;
       --meal-bd: #facc15;
       --meal-fg: #fef9c3;
@@ -376,8 +370,8 @@
     const fmt = s => { let [a, b] = s.split(":"); a = +a; const p = a >= 12 ? "pm" : "am"; a = a % 12 || 12; return a + (b === "00" ? "" : ":" + b) + p };
 
     const weekdayBase = [
-      ev("7:00", "8:00", "Morning routine", "base"),
-      ev("8:00", "9:45", "Starbucks", "shift"),
+      ev("8:00", "9:00", "Morning routine", "base"),
+      ev("9:00", "9:45", "Starbucks", "meal"),
       ev("10:00", "10:50", "Python", "class"),
       ev("12:00", "13:50", "Work / LTS", "job")
     ];
@@ -418,15 +412,15 @@
     ];
 
     const sat = [
-      ev("7:00", "8:00", "Morning routine", "base"),
-      ev("10:00", "11:00", "Starbucks", "shift"),
+      ev("8:00", "9:00", "Morning routine", "base"),
+      ev("10:00", "11:00", "Starbucks", "meal"),
       ev("15:00", "17:00", "Metals Studio", "studio"),
       ev("17:30", "18:30", "Dinner", "meal"),
       ev("19:00", "21:00", "Metals Studio", "studio")
     ];
 
     const sun = [
-      ev("7:00", "8:00", "Morning routine", "base"),
+      ev("8:00", "9:00", "Morning routine", "base"),
       ev("10:00", "11:30", "Brunch", "meal"),
       ev("17:30", "18:30", "Dinner", "meal")
     ];
@@ -434,7 +428,7 @@
     const schedule = { Sun: sun, Mon: monWed, Tue: tue, Wed: wed, Thu: th, Fri: fri, Sat: sat };
     const dayOrder = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const days = dayOrder.map(day => [day, schedule[day]]);
-    const cats = { class: "Classes", job: "Work", shift: "Starbucks", meal: "Meals", flex: "Flex / homework", free: "Free time", base: "Routine", club: "Club", appt: "Appointments", studio: "Studio time" };
+    const cats = { class: "Classes", job: "Work", meal: "Starbucks", meal: "Meals", flex: "Flex / homework", free: "Free time", base: "Routine", club: "Club", appt: "Appointments", studio: "Studio time" };
     const dayLabels = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday" };
     const easternNow = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
     const currentDay = dayOrder[easternNow.getDay()];
