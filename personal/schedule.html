@@ -444,10 +444,10 @@
 
     const workMinutes = workEntries.reduce((total, event) => total + (m(event.end) - m(event.start)), 0);
     const ltsMinutes = 30 + ltsEntries.reduce((total, event) => total + (m(event.end) - m(event.start)), 0);
-    const pay = ((workMinutes / 60) * 125 * 0.7) + (((ltsMinutes) / 60) * 11 * 0.95);
+    // const pay = ((workMinutes / 60) * 125 * 0.7) + (((ltsMinutes) / 60) * 11 * 0.95);
     const hoursText = minutes => (minutes / 60).toFixed(1).replace(/\.0$/, "");
     const summary = document.getElementById("scheduleSummary");
-    summary.textContent = `Wake 7:00am · Bed 11:00pm · Work ${hoursText(workMinutes)} Hours · ${hoursText(ltsMinutes)} LTS Hours · Estimated Pay $${pay.toFixed(2)}`;
+    summary.textContent = `Wake 7:00am · Bed 11:00pm · Work ${hoursText(workMinutes)} Hours · ${hoursText(ltsMinutes)} LTS Hours`;
 
     document.getElementById("legend").innerHTML = Object.entries(cats).filter(([k]) => !["flex", "free"].includes(k)).map(([k, v]) => `<span class="chip" style="background:var(--${k}-bg);border-color:var(--${k}-bd);color:var(--${k}-fg)">${v}</span>`).join("");
 
