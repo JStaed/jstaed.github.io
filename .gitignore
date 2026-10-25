@@ -1,2 +1,4 @@
 .venv/
 .vscode/
+work/pennwest-menu/update_menu.py
+__pycache__/

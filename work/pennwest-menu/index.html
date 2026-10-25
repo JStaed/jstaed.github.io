@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PennWest Edinboro Meal Planner</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="planner.css">
+</head>
+<body>
+  <a href="https://www.jstaed.me" class="homeButton" aria-label="Home"><i class="fa-sharp-duotone fa-solid fa-house" aria-hidden="true"></i></a>
+  <button id="toggleDark" class="darkModeButton"><i class="fa-solid fa-sun"></i></button>
+  <div class="mp">
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>PennWest Edinboro Meal Planner</h1>
+      <p id="subtitle">Dining hall menus, planned one day at a time.</p>
+    </div>
+    <div class="status" id="status" role="status">Loading…</div>
+  </header>
+
+  <main class="layout">
+    <section class="card cal" id="calendar" aria-label="Month calendar"></section>
+
+    <section class="day" aria-label="Selected day">
+      <div class="day-head" id="dayhead"></div>
+      <div class="tabs" id="tabs" role="tablist" aria-label="Day views"></div>
+
+      <div id="buildview">
+        <div class="periods" id="periods" role="group" aria-label="Meal period"></div>
+        <div class="build" style="margin-top:14px">
+          <div class="menu">
+            <div class="ctl">
+              <input type="search" id="q" placeholder="Search this menu" aria-label="Search this menu" autocomplete="off">
+              <select id="sort" aria-label="Sort menu">
+                <option value="station">By station</option>
+                <option value="cal">Fewest calories</option>
+                <option value="prot">Most protein</option>
+                <option value="sod">Lowest sodium</option>
+              </select>
+            </div>
+            <div class="chips" id="filters"></div>
+            <details class="guide">
+              <summary>How portions are shown</summary>
+              <ul>
+                <li><b>1 palm</b> is a piece of cooked meat, fish or tofu the size and thickness of your palm, about 3 oz (a deck of cards).</li>
+                <li><b>1 cup</b> is about a fist. ½ cup is a tennis ball, ¼ cup a golf ball.</li>
+                <li><b>2 tbsp</b> is a ping-pong ball. 1 tbsp is a thumb tip.</li>
+                <li>Pizza is per slice. Sandwiches, wraps, burgers and similar are per whole item. Small items are counted.</li>
+                <li>These are estimates converted from the ounce weights on the dining hall menu. Nutrition values are the dining hall's own.</li>
+              </ul>
+            </details>
+            <div id="menulist"></div>
+          </div>
+          <aside class="tray" id="tray" aria-label="Your meal"></aside>
+        </div>
+      </div>
+
+      <div id="summaryview" class="sum" hidden></div>
+    </section>
+  </main>
+
+  <p class="foot" id="foot"></p>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </div>
+  <script src="data.js"></script>
+  <script src="planner.js"></script>
+  <script src="../../script.js"></script>
+</body>
+</html>
