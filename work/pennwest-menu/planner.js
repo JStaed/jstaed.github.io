@@ -236,7 +236,7 @@ function renderCalendar(){
     var label=DOWS[date.getDay()]+' '+MONTHS[m]+' '+d+(menu?'':', no menu posted')+(meals.length?', '+meals.length+' meal'+(meals.length>1?'s':'')+' planned, '+fmt(t.cal)+' calories':'');
     h+='<button class="'+cls+'" data-act="pick" data-date="'+k+'" aria-label="'+esc(label)+'"'+(k===st.sel?' aria-current="date"':'')+'><span class="dn num">'+d+'</span><span class="dots">'+dots+'</span><span class="ck num">'+(t?fmt(t.cal):'')+'</span></button>';
   }
-  h+='</div><div class="cal-foot"><span>B Breakfast · L Lunch · D Dinner. Filled means a meal is planned.</span>'+
+  h+='</div><div class="cal-foot"><span>B Breakfast · L Lunch · D Dinner.<br>Filled means a meal is planned.</span>'+
      '<button class="link-btn" data-act="today">Go to today</button></div>';
   $('calendar').innerHTML=h;
 }
@@ -390,7 +390,7 @@ function renderTray(){
   body+='<div class="mtabs">'+meals.map(function(m){return '<button class="mtab" data-act="pickmeal" data-id="'+m.id+'" aria-pressed="'+(meal&&m.id===meal.id)+'">'+esc(mealLabel(m))+'</button>'}).join('')+
         '<button class="mtab new" data-act="newmeal">+ New '+SLOTNAME[slot].toLowerCase()+'</button></div>';
   if(!meal){
-    body+='<p class="tempty">Nothing here yet. Tap + next to any item on the menu, including drinks, cereal and bagels, to start your '+SLOTNAME[slot].toLowerCase()+'.</p>';
+    body+='<p class="tempty">Nothing here yet. Tap + next to any item on the menu to start your '+SLOTNAME[slot].toLowerCase()+'.</p>';
   } else {
     body+='<input class="mname" id="mname" type="text" maxlength="60" placeholder="Name this meal (optional)" aria-label="Meal name" value="'+esc(meal.name)+'">';
     if(meal.items.length||meal.drinks.length){
