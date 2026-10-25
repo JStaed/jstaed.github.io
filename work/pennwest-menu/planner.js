@@ -439,7 +439,7 @@ function mfpButton(meal){
 function mfpPanel(meal){
   if(st.mfp!==meal.id) return '';
   var v=mfpVals(meal), meals={B:'Breakfast',L:'Lunch',D:'Dinner'};
-  function tile(label,val,unit){return '<button class="mfp-num" data-act="mfpnum" data-v="'+val+'" aria-label="Copy '+label+' '+val+(unit?' grams':'')+'"><span class="mfp-l">'+label+'</span><b class="num">'+val+(unit?' g':'')+'</b><span class="mfp-c">Tap to copy</span></button>'}
+  function tile(label,val,unit){return '<button class="mfp-num" data-act="mfpnum" data-v="'+val+'" aria-label="Copy '+label+' '+val+(unit?' grams':'')+'"><span class="mfp-l">'+label+'</span>: <b class="num">'+val+(unit?' g':'')+'</b><span class="mfp-c"></span></button><br>'}
   return '<div class="mfp" id="mfp-'+meal.id+'"><p class="mfp-s">MyFitnessPal does not let other sites add to your diary, so use its <b>Quick Add</b>: open the app, go to <b>Diary, '+meals[meal.slot]+', Add Food, Quick Add</b>. Tap a number below to copy it, then paste it into the matching box.</p>'+
     '<div class="mfp-nums">'+tile('Calories',v.cal,false)+tile('Carbs',v.carb,true)+tile('Fat',v.fat,true)+tile('Protein',v.prot,true)+'</div>'+
     '<div class="sum-actions"><a class="btn ghost mfp-open" href="'+MFP_URL+'" target="_blank" rel="noopener">Open MyFitnessPal</a><span class="num mfpnote" role="status" style="font-size:12.5px;color:var(--muted)"></span></div><div class="mfpfall"></div></div>';
