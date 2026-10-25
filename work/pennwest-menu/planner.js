@@ -432,7 +432,6 @@ function renderTray(){
    meal's totals in the form its Quick Add screen asks for, plus a link to open the app. */
 var MFP_URL='https://www.myfitnesspal.com/food/diary';
 function mfpVals(meal){var t=mealTotals(meal);return {cal:Math.round(t.cal),carb:Math.round(t.carb),fat:Math.round(t.fat),prot:Math.round(t.prot)}}
-function mfpText(meal){var v=mfpVals(meal);return SLOTNAME[meal.slot]+'\nCalories: '+v.cal+'\nCarbs: '+v.carb+' g\nFat: '+v.fat+' g\nProtein: '+v.prot+' g'}
 function mfpButton(meal){
   var open=st.mfp===meal.id;
   return '<button class="btn ghost mfp-btn" data-act="mfp" data-id="'+meal.id+'" aria-expanded="'+open+'" aria-controls="mfp-'+meal.id+'"><i class="fa-solid fa-utensils" aria-hidden="true"></i> '+(open?'Hide MyFitnessPal':'Export to MyFitnessPal')+'</button>';
@@ -440,9 +439,10 @@ function mfpButton(meal){
 function mfpPanel(meal){
   if(st.mfp!==meal.id) return '';
   var v=mfpVals(meal), meals={B:'Breakfast',L:'Lunch',D:'Dinner'};
-  return '<div class="mfp" id="mfp-'+meal.id+'"><p class="mfp-s">MyFitnessPal does not let other sites add to your diary, so use its <b>Quick Add</b>: open the app, go to <b>Diary, '+meals[meal.slot]+', Add Food, Quick Add</b>, and enter these totals.</p>'+
-    '<dl class="facts"><div><dt>Calories</dt><dd class="num">'+v.cal+'</dd></div><div><dt>Carbs</dt><dd class="num">'+v.carb+' g</dd></div><div><dt>Fat</dt><dd class="num">'+v.fat+' g</dd></div><div><dt>Protein</dt><dd class="num">'+v.prot+' g</dd></div></dl>'+
-    '<div class="sum-actions"><button class="btn" data-act="mfpcopy" data-id="'+meal.id+'">Copy values</button><a class="btn ghost" href="'+MFP_URL+'" target="_blank" rel="noopener">Open MyFitnessPal</a><span class="num mfpnote" style="font-size:12.5px;color:var(--muted)"></span></div><div class="mfpfall"></div></div>';
+  function tile(label,val,unit){return '<button class="mfp-num" data-act="mfpnum" data-v="'+val+'" aria-label="Copy '+label+' '+val+(unit?' grams':'')+'"><span class="mfp-l">'+label+'</span><b class="num">'+val+(unit?' g':'')+'</b><span class="mfp-c">Tap to copy</span></button>'}
+  return '<div class="mfp" id="mfp-'+meal.id+'"><p class="mfp-s">MyFitnessPal does not let other sites add to your diary, so use its <b>Quick Add</b>: open the app, go to <b>Diary, '+meals[meal.slot]+', Add Food, Quick Add</b>. Tap a number below to copy it, then paste it into the matching box.</p>'+
+    '<div class="mfp-nums">'+tile('Calories',v.cal,false)+tile('Carbs',v.carb,true)+tile('Fat',v.fat,true)+tile('Protein',v.prot,true)+'</div>'+
+    '<div class="sum-actions"><a class="btn ghost mfp-open" href="'+MFP_URL+'" target="_blank" rel="noopener">Open MyFitnessPal</a><span class="num mfpnote" role="status" style="font-size:12.5px;color:var(--muted)"></span></div><div class="mfpfall"></div></div>';
 }
 function findMeal(id){var f=null;Object.keys(plans).forEach(function(k){plans[k].meals.forEach(function(m){if(m.id===id)f=m})});return f}
 
@@ -534,11 +534,12 @@ var actions = {
   },
   editmeal:function(el){st.slot=el.getAttribute('data-slot');st.active[st.sel+st.slot]=el.getAttribute('data-id');st.view='build';st.trayOpen=true;renderAll()},
   mfp:function(el){var id=el.getAttribute('data-id');st.mfp=st.mfp===id?null:id;renderTray();renderSummary()},
-  mfpcopy:function(el){
-    var m=findMeal(el.getAttribute('data-id')); if(!m)return;
-    var text=mfpText(m), box=el.closest('.mfp'), note=box.querySelector('.mfpnote'), fb=box.querySelector('.mfpfall');
-    function fall(){ fb.innerHTML='<textarea class="copybox" readonly style="margin-top:10px"></textarea>'; var ta=fb.firstChild; ta.value=text; ta.focus(); ta.select(); note.textContent='Copy was blocked here. The text is selected for you to copy.' }
-    try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){note.textContent='Copied'},fall) } else fall() }catch(e){fall()}
+  mfpnum:function(el){
+    var val=el.getAttribute('data-v'), box=el.closest('.mfp'), note=box.querySelector('.mfpnote'), fb=box.querySelector('.mfpfall');
+    var label=el.querySelector('.mfp-l').textContent;
+    function mark(){box.querySelectorAll('.mfp-num').forEach(function(b){b.classList.remove('done')});el.classList.add('done');note.textContent=label+' ('+val+') copied'}
+    function fall(){ fb.innerHTML='<input class="copybox mfp-fall" readonly style="margin-top:10px;min-height:0;height:38px">'; var ta=fb.firstChild; ta.value=val; ta.focus(); ta.select(); note.textContent='Copy was blocked here. The number is selected for you to copy.' }
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(val).then(mark,fall) } else fall() }catch(e){fall()}
   },
   copy:function(){
     var text=summaryText(), note=$('copynote');
@@ -546,6 +547,19 @@ var actions = {
     try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){if(note)note.textContent='Copied'},fall) } else fall() }catch(e){fall()}
   }
 };
+/* "Open MyFitnessPal": on phones try the app first, and fall back to the website if it is not installed. */
+document.addEventListener('click',function(ev){
+  var a=ev.target.closest('a.mfp-open'); if(!a)return;
+  var ua=navigator.userAgent||'', ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1), android=/Android/.test(ua);
+  if(!ios&&!android)return; /* desktop: the normal link opens the website */
+  ev.preventDefault();
+  var web=a.getAttribute('href');
+  if(android){ location.href='intent://#Intent;scheme=mfp;package=com.myfitnesspal.android;S.browser_fallback_url='+encodeURIComponent(web)+';end'; return }
+  var left=false, onHide=function(){left=true};
+  document.addEventListener('visibilitychange',onHide); window.addEventListener('pagehide',onHide);
+  location.href='mfp://';
+  setTimeout(function(){document.removeEventListener('visibilitychange',onHide); if(!left&&!document.hidden) location.href=web},1500);
+});
 document.addEventListener('click',function(ev){
   var el=ev.target.closest('[data-act]'); if(!el)return;
   var fn=actions[el.getAttribute('data-act')]; if(fn) fn(el);
